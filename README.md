@@ -67,6 +67,7 @@ Updated the reset logic so the New Game button properly restarts the game.
 
 ## 📸 Demo
 
+ai110_w3_project.pdf
 
 ## 🚀 Stretch Features
 
