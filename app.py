@@ -1,55 +1,54 @@
 import random
 import streamlit as st
 
+def check_guess(guess, secret):
+    """
+    Compare guess to secret and return (outcome, message).
+
+    outcome examples: "Win", "Too High", "Too Low"
+    """
+    if guess == secret:
+        return "Win", "Congratulations! You've guessed the secret number."
+    elif guess > secret:
+        return "Too High", "Your guess is too high. Try again!"
+    else:
+        return "Too Low", "Your guess is too low. Try again!"
+
+# FIX: Define the range for each difficulty level (Easy: 1–20, Normal: 1–50, Hard: 1–100).
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
     if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
         return 1, 50
+    if difficulty == "Hard":
+        return 1, 100
     return 1, 100
 
+def parse_guess(raw: str, low: int, high : int):
+    """
+    Parse user input into an int guess.
 
-def parse_guess(raw: str):
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
+    Returns: (ok: bool, guess_int: int | None, error_message: str | None)
+    """
+    if raw is None or raw.strip() == "":
         return False, None, "Enter a guess."
 
     try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
+        value = int(raw)  # Ensure the input is an integer
+    except ValueError:
+        return False, None, "That is not a valid whole number."
+
+    # FIX: Validate the range using variables instead of hardcoding 1–100 for different difficulty levels.
+    if value < low or value > high:
+        return False, None, f"Enter a number between {low} and {high}."
 
     return True, value, None
 
-
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
-
+# FIX: Adjust the score formula by subtracting 1 from attempt_number so that winning on the first attempt gives a score of 100.
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
-        points = 100 - 10 * (attempt_number + 1)
+        points = 100 - 10 * (attempt_number - 1)
         if points < 10:
             points = 10
         return current_score + points
@@ -74,12 +73,13 @@ st.sidebar.header("Settings")
 difficulty = st.sidebar.selectbox(
     "Difficulty",
     ["Easy", "Normal", "Hard"],
-    index=1,
+    index=0,
 )
 
+# FIX: Adjusts the number of attempts — more for Easy mode and fewer for Hard mode.
 attempt_limit_map = {
-    "Easy": 6,
-    "Normal": 8,
+    "Easy": 8,
+    "Normal": 6,
     "Hard": 5,
 }
 attempt_limit = attempt_limit_map[difficulty]
@@ -93,7 +93,7 @@ if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -107,8 +107,8 @@ if "history" not in st.session_state:
 st.subheader("Make a guess")
 
 st.info(
-    f"Guess a number between 1 and 100. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
+    f"Guess a number between {low} and {high}. "
+    f"Attempts left: {attempt_limit - st.session_state.attempts - 1}"  # Correct remaining attempts
 )
 
 with st.expander("Developer Debug Info"):
@@ -132,8 +132,11 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
-    st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.secret = random.randint(low, high)  # Generate a new secret number
+    st.session_state.attempts = 0  # Reset attempts to the starting value
+    st.session_state.score = 0  # Reset the score
+    st.session_state.status = "playing"  # Reset the game status
+    st.session_state.history = []  # Clear the guess history
     st.success("New game started.")
     st.rerun()
 
@@ -143,24 +146,20 @@ if st.session_state.status != "playing":
     else:
         st.error("Game over. Start a new game to try again.")
     st.stop()
+    
+if "attempts" not in st.session_state:
+    st.session_state.attempts = 0  # Start attempts at 0
 
 if submit:
-    st.session_state.attempts += 1
-
-    ok, guess_int, err = parse_guess(raw_guess)
+    ok, guess_int, err = parse_guess(raw_guess, low, high)
 
     if not ok:
         st.session_state.history.append(raw_guess)
         st.error(err)
     else:
         st.session_state.history.append(guess_int)
-
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
-
-        outcome, message = check_guess(guess_int, secret)
+        
+        outcome, message = check_guess(guess_int, st.session_state.secret)
 
         if show_hint:
             st.warning(message)
@@ -168,7 +167,7 @@ if submit:
         st.session_state.score = update_score(
             current_score=st.session_state.score,
             outcome=outcome,
-            attempt_number=st.session_state.attempts,
+            attempt_number=st.session_state.attempts + 1,  # Pass the correct attempt number
         )
 
         if outcome == "Win":
@@ -179,7 +178,8 @@ if submit:
                 f"Final score: {st.session_state.score}"
             )
         else:
-            if st.session_state.attempts >= attempt_limit:
+            st.session_state.attempts += 1  # Increment attempts AFTER processing
+            if st.session_state.attempts >= attempt_limit:  # Adjust game over condition
                 st.session_state.status = "lost"
                 st.error(
                     f"Out of attempts! "
