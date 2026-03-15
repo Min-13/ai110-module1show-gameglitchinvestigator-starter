@@ -55,18 +55,17 @@ Replaced hardcoded number ranges with dynamic ranges based on the selected diffi
 
 Implemented proper range definitions:
 
-Easy: 1–20
+**Easy: 1–20**
 
-Normal: 1–50
+**Normal: 1–50**
 
-Hard: 1–100
+**Hard: 1–100**
 
 Fixed the attempt logic so easier modes allow more attempts while harder modes allow fewer.
 
 Updated the reset logic so the New Game button properly restarts the game.
 
 ## 📸 Demo
-
 
 
 ## 🚀 Stretch Features
