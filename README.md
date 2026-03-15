@@ -67,10 +67,7 @@ Updated the reset logic so the New Game button properly restarts the game.
 
 ## 📸 Demo
 
-[demo](../../../ai110_w3_project.pdf)
-- [ ] [[Insert a screenshot of your fixed, winning game here](../../../ai110_w3_project.pdf)]
-- [ ] [pytest](../../../pytest_doc.pdf)
-file:///Users/minthawzin/Desktop/pytest_doc.pdf
+
 ## 🚀 Stretch Features
 
-- [demo](../../../ai110_w3_project.pdf)
+
