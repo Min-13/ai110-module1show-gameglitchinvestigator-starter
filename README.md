@@ -66,7 +66,8 @@ Fixed the attempt logic so easier modes allow more attempts while harder modes a
 Updated the reset logic so the New Game button properly restarts the game.
 
 ## 📸 Demo
-file:///Users/minthawzin/Downloads/ai110_w3_project.pdf
+
+[demo](../../../ai110_w3_project.pdf)
 
 ## 🚀 Stretch Features
 
