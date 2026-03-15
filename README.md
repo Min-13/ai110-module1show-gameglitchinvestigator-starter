@@ -25,13 +25,49 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game Purpose**
+
+The purpose of this game is to create an interactive number-guessing game where the player tries to guess a randomly generated secret number within a limited number of attempts. The difficulty levels (Easy, Normal, Hard) change the range of possible numbers and the number of attempts allowed. The game provides feedback after each guess to guide the player toward the correct number.
+
+**Bugs I Found**
+
+While testing the game, I noticed several issues:
+
+The hints were sometimes incorrect. For example, when the guess was lower than the secret number, the game would still suggest going lower.
+
+The score appeared before the game was actually finished.
+
+The number range displayed to the player was inconsistent with the difficulty level.
+
+The New Game button did not properly restart the game after winning.
+
+The number of attempts did not match the selected difficulty level.
+
+**Fixes I Applied**
+
+To resolve these issues, I made several changes:
+
+Corrected the comparison logic so the hints correctly indicate whether the guess is too high or too low.
+
+Adjusted the scoring logic by subtracting 1 from attempt_number so a correct guess on the first attempt results in a score of 100.
+
+Replaced hardcoded number ranges with dynamic ranges based on the selected difficulty level.
+
+Implemented proper range definitions:
+
+Easy: 1–20
+
+Normal: 1–50
+
+Hard: 1–100
+
+Fixed the attempt logic so easier modes allow more attempts while harder modes allow fewer.
+
+Updated the reset logic so the New Game button properly restarts the game.
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+
 
 ## 🚀 Stretch Features
 
