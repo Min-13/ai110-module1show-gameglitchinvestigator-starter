@@ -68,7 +68,7 @@ Updated the reset logic so the New Game button properly restarts the game.
 ## 📸 Demo
 
 - PDF: [ai110_w3_project.pdf](./ai110_w3_project.pdf)
-- PDF: 
+- PDF: [![Pytest Doc Preview](assets/pytest_doc_preview.png)](pytest_doc.pdf)
 
 ## 🚀 Stretch Features
 
